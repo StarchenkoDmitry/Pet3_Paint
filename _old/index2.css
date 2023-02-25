@@ -1,0 +1,33 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing:border-box;
+}
+
+a{
+    text-decoration: none;
+}
+
+body{
+    
+}
+
+.wrapper{    
+    height: 100%;
+}
+
+
+.main{
+    /* min-height: 100vh; */
+    /* max-height: 1000px; */
+    /* height: 100vh; */
+    height: 100%;
+    
+    background-color: rgb(175, 175, 175);
+}
+
+
+.block{
+    height: 100%;
+    background-color: blueviolet;
+}

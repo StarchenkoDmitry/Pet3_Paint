@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/index.css">
+    <script defer src="/js/index.js"></script>
+    <title>My Paint</title>
+</head>
+<body>
+    <div class="main">
+        <header class="header" id="header">
+            <section class="block-files mod-header-block">
+                <div onclick="openFile();" class="block-files-item">
+                    <img src="img/svg/folder_icon.svg" alt="">
+                    <span class="mod-block-name">Open file</span>
+                </div>
+                <div onclick="saveFile();" class="block-files-item">
+                    <img src="img/svg/file_icon2.svg" alt="">
+                    <span class="mod-block-name">Save file</span>
+                </div>
+            </section>
+            <section class="block-options-image mod-header-block">
+                <span class="mod-block-name">Resizing</span>
+                <div class="block-options-image-list">
+                    <div class="block-options-size">
+                        <span class="mod-block-name">Width</span>
+                        <span class="mod-block-name">Height</span>
+                    </div>
+                    <div class="block-options-inputs">
+                        <input class="mod-block-name" type="text" value="1280" id="block-options-size-width">
+                        <input class="mod-block-name" type="text" value="720" id="block-options-size-height">
+                    </div>
+                    <div onclick="changeSize();" class="block-options-change">Change</div>
+                </div>
+            </section>
+            <section class="block-instumetns mod-header-block">
+                <span class="mod-block-name">Tools</span>
+                <div class="instumetn-list">
+                    <div class="instumetn-item"><img src="img/svg/pencil_icon.svg" alt="Pencil"></div>
+                    <div class="instumetn-item"><img src="img/svg/pencil_icon.svg" alt="Pencil"></div>
+                    <div class="instumetn-item"><img src="img/svg/pencil_icon.svg" alt="Pencil"></div>
+                    <div class="instumetn-item"><img src="img/svg/pencil_icon.svg" alt="Pencil"></div>
+                </div>
+            </section>
+            <section class="block-current-colors mod-header-block">
+                <div>
+                    <span class="mod-block-name">MouseL</span>
+                    <div class="block-current-color" id="mouseL"></div>
+                </div>
+                <div>
+                    <span class="mod-block-name">MouseR</span>
+                    <div class="block-current-color" id="mouseR"></div>
+                </div>
+            </section>
+            <section class="block-widthline mod-header-block">
+                <span>Width Line</span>
+                <div id="block-widthline-list"></div>
+            </section>
+            <section class="block-palitra mod-header-block">
+                <span class="mod-block-name">Colors</span>
+                <div class="palitra-list" id="palitra-list"></div>
+            </section>
+            <section class="language mod-header-block">
+                <P>Language</P>
+            </section>
+        </header>
+        <section class="main-draw" id="main-draw">
+            <canvas class="canvas" id="canvas" width="550" height="550"></canvas>
+        </section>
+        <footer class="footer">
+            <span  class="mod-block-name" id="block-cords">(0, 0)px</span>           
+            <input type="range" min="0" max="100" step="1" value="50">
+        </footer>
+    </div>
+</body>
+</html>
+
+
