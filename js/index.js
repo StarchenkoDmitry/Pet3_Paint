@@ -10,6 +10,7 @@ const Element_mouseR = document.getElementById("mouseR");
 
 let curentColorL = "rgb(0, 0, 255)";
 let curentColorR = "rgb(255, 0, 0)";
+
 let currentWidthLine = 1;
 
 setColorMouseL(curentColorL);
@@ -221,16 +222,12 @@ const Instrument_Lastik = Symbol();
 const Instrument_Text = Symbol();
 
 
-const palitraCount = 30;
-const stepColor = 255/palitraCount;
-for(let p =0;p < palitraCount;p++){
-    articleDiv.innerHTML+=createElementColorFromRGB(0,0,(stepColor*(p+1)));
-}
-function createElementColorFromRGB(r,g,b){
-  return `<div class="palitra-item">
-  <div class="palitra-item-color" style="background-color: rgb(${r},${g}, ${b});"></div>
+for(let p = 0;p <CONST_colorsList.length;p++){
+  articleDiv.innerHTML+=`<div class="palitra-item">
+  <div class="palitra-item-color" style="background-color: ${CONST_colorsList[p]};"></div>
   </div>`;
 }
+
 Array.from(document.getElementsByClassName("palitra-item-color")).forEach(e =>{
   e.addEventListener("click",()=>{
     setColorMouseL(e.style.backgroundColor);
