@@ -5,6 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="css/index.css">
+    <script defer src="js/lang.js"></script>
     <script defer src="js/index.js"></script>
     <title>My Paint</title>
 </head>
@@ -14,19 +15,19 @@
             <section class="block-files mod-header-block">
                 <div onclick="openFile();" class="block-files-item">
                     <img src="img/svg/folder_icon.svg" alt="">
-                    <span class="mod-block-name">Open file</span>
+                    <span class="lng-open-file mod-block-name">Open file</span>
                 </div>
                 <div onclick="saveFile();" class="block-files-item">
                     <img src="img/svg/file_icon2.svg" alt="">
-                    <span class="mod-block-name">Save file</span>
+                    <span class="lng-save-file mod-block-name">Save file</span>
                 </div>
             </section>
             <section class="block-options-image mod-header-block">
-                <span class="mod-block-name">Resizing</span>
+                <span class="lng-resizing mod-block-name">Resizing</span>
                 <div class="block-options-image-list">
                     <div class="block-options-size">
-                        <span class="mod-block-name">Width</span>
-                        <span class="mod-block-name">Height</span>
+                        <span class="lng-width mod-block-name">Width</span>
+                        <span class="lng-height mod-block-name">Height</span>
                     </div>
                     <div class="block-options-inputs">
                         <input class="mod-block-name" type="text" value="1280" id="block-options-size-width">
@@ -36,7 +37,7 @@
                 </div>
             </section>
             <section class="block-instumetns mod-header-block">
-                <span class="mod-block-name">Tools</span>
+                <span class="lng-tools mod-block-name">Tools</span>
                 <div class="instumetn-list">
                     <div class="instumetn-item"><img src="img/svg/pencil_icon.svg" alt="Pencil"></div>
                     <div class="instumetn-item"><img src="img/svg/pencil_icon.svg" alt="Pencil"></div>
@@ -46,24 +47,35 @@
             </section>
             <section class="block-current-colors mod-header-block">
                 <div>
-                    <span class="mod-block-name">MouseL</span>
+                    <span class="lng-mousel mod-block-name">MouseL</span>
                     <div class="block-current-color" id="mouseL"></div>
                 </div>
                 <div>
-                    <span class="mod-block-name">MouseR</span>
+                    <span class="lng-mouser mod-block-name">MouseR</span>
                     <div class="block-current-color" id="mouseR"></div>
                 </div>
             </section>
             <section class="block-widthline mod-header-block">
-                <span>Width Line</span>
+                <span class="lng-widthline mod-block-name">Width Line</span>
                 <div id="block-widthline-list"></div>
             </section>
             <section class="block-palitra mod-header-block">
-                <span class="mod-block-name">Colors</span>
+                <span class="lng-colors mod-block-name">Colors</span>
                 <div class="palitra-list" id="palitra-list"></div>
             </section>
-            <section class="language mod-header-block">
-                <P>Language</P>
+            <section class="mod-header-block">                
+                <span class="lng-keyboard-shortcut mod-block-name">Keyboard shortcut</span>
+                <div class="lng-keyboard-shortcut-1 mod-block-whitegray">Scroll = vertical scroll</div>
+                <div class="lng-keyboard-shortcut-2 mod-block-whitegray">Shift + Scroll = horizontal scroll</div>
+                <div class="lng-keyboard-shortcut-3 mod-block-whitegray">Alt + Scroll = scaling</div>
+            </section>
+            <section class="block-language mod-header-block">
+                <p class="lng-language mod-block-name">Language</p>
+                <select name="" id="block-language-list" onchange="eventChangeSelectLang()">
+                    <option value="en">English</option>
+                    <option value="ru">Руский</option>
+                    <option value="ua">Украинский</option>
+                </select>
             </section>
         </header>
         <section class="main-draw" id="main-draw">

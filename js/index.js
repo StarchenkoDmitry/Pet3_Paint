@@ -5,13 +5,12 @@ const articleDiv = document.getElementById("palitra-list");
 const doc_cords = document.getElementById("block-cords");
 const doc_block_widthline_list = document.getElementById("block-widthline-list");
 
+const Element_mouseL = document.getElementById("mouseL");
+const Element_mouseR = document.getElementById("mouseR");
+
 let curentColorL = "rgb(0, 0, 255)";
 let curentColorR = "rgb(255, 0, 0)";
 let currentWidthLine = 1;
-
-
-const Element_mouseL = document.getElementById("mouseL");
-const Element_mouseR = document.getElementById("mouseR");
 
 setColorMouseL(curentColorL);
 setColorMouseR(curentColorR);
@@ -20,6 +19,9 @@ let currentHeaderHeight = document.getElementById("header").clientHeight;
 let currentMainDrawWidth = document.getElementById("main-draw").clientWidth;
 let currentMainDrawHeight = document.getElementById("main-draw").clientHeight;
 
+
+const selectLang = document.getElementById("block-language-list");
+const listLang = ["en","ru","ua"];
 
 
 
@@ -41,7 +43,7 @@ let canvContext2DHeight = currentMainDrawHeight > canvDefMinHeight? currentMainD
 setCanvSizeStyle(canvWidth,canvHeight);
 setCanvTopLeft(cavnDefX,cavnDefY);
 setCanvSizeContex2D(canvContext2DWidth,canvContext2DHeight);
-DrawMesh();
+// DrawMesh();
 
 
 
@@ -244,6 +246,7 @@ Array.from(document.getElementsByClassName("palitra-item-color")).forEach(e =>{
 
 const CONST_WidthLine = [4,8,16];
 const CONST_WidthLineForStyleElement = [4,8,16];
+currentWidthLine = 16;
 createWidthLineList();
 
 function createWidthLineList(){
@@ -318,7 +321,7 @@ window.onwheel = (e)=>{
       canvMove(0, e.deltaY,.2);
     }
     else{
-      canvMove(e.deltaY, 0,.2);
+      canvMove(-e.deltaY, 0,.2);
     }
   }
   else{
@@ -470,7 +473,7 @@ function changeSize(){
 
   currentNumberScales = CONST_DEF_Sacle;
 
-  DrawMesh();
+  // DrawMesh();
 }
 
 
@@ -504,6 +507,49 @@ function openFile(){
   input.click();
 }
 
+function saveFile(){
+  // localStorage.clear();
+  // let imgAsDataURL = canv.toDataURL("image/png");
+  // try {
+  //   localStorage.setItem("elephant", imgAsDataURL);
+  //   console.log("Saved file");
+  // }
+  // catch (e) {
+  //     console.log("Storage failed: " + e);
+  // }
+
+  let imgAsDataURL = canv.toDataURL("image/png");
+  var link = document.createElement("a");
+  // document.body.appendChild(link);
+  link.setAttribute("href", imgAsDataURL);
+  link.setAttribute("download", "111.png");
+  link.click();
+  
+}
 
 
-function saveFile(){}
+
+function eventChangeSelectLang(){
+  const nLang = selectLang.value;
+  changeLanguage(nLang);
+}
+
+function changeLanguage(newLang){  
+  for(let key in langListTrans){
+    let elem = document.querySelector(".lng-" + key);
+    if(elem){
+      elem.innerHTML=langListTrans[key][newLang];
+    }
+  }
+  location.href = window.location.pathname + "#" + newLang;
+}
+
+
+let hash = window.location.hash;
+if(hash.length>1) {hash = hash.substring(1); }
+else if (hash.length <=1) {hash = listLang[0];}
+console.log(hash);
+if(listLang.includes(hash)){
+  changeLanguage(hash);
+  selectLang.value = hash;
+}
