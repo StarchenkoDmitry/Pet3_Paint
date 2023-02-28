@@ -8,6 +8,7 @@ const doc_block_widthline_list = document.getElementById("block-widthline-list")
 const Element_mouseL = document.getElementById("mouseL");
 const Element_mouseR = document.getElementById("mouseR");
 
+const canvBackgroundColor = "rgb(255, 255, 255)";
 let curentColorL = "rgb(0, 0, 255)";
 let curentColorR = "rgb(255, 0, 0)";
 
@@ -23,6 +24,7 @@ let currentMainDrawHeight = document.getElementById("main-draw").clientHeight;
 
 const selectLang = document.getElementById("block-language-list");
 const listLang = ["en","ru","ua"];
+
 
 
 
@@ -44,6 +46,7 @@ let canvContext2DHeight = currentMainDrawHeight > canvDefMinHeight? currentMainD
 setCanvSizeStyle(canvWidth,canvHeight);
 setCanvTopLeft(cavnDefX,cavnDefY);
 setCanvSizeContex2D(canvContext2DWidth,canvContext2DHeight);
+drawFillBackground();
 // DrawMesh();
 
 
@@ -436,7 +439,10 @@ window.onmouseup = (e) =>{
   mouseCords.y_window = y;
 }
 
-
+function drawFillBackground(){
+  ctx.fillStyle = canvBackgroundColor;
+  ctx.fillRect(0,0,canv.width,canv.height);
+}
 
 function drawLine(bx,by,ex,ey,lineColor,width=10){
   ctx.beginPath();
@@ -470,10 +476,10 @@ function changeSize(){
 
   currentNumberScales = CONST_DEF_Sacle;
 
+  drawFillBackground();
+
   // DrawMesh();
 }
-
-
 
 
 
@@ -485,10 +491,12 @@ function openFile(){
   input.onchange = _this => 
   {
     let files = Array.from(input.files);
-
+    if(files.length <=0) return;
+    if(!files[0].type.includes("image/")) return;
     var base_image = new Image();
     base_image.src = URL.createObjectURL(files[0]);
     base_image.onload = l =>{
+      
       if(base_image.width <1 || base_image.height <1) return;
       
       setCanvSizeStyle(base_image.width,base_image.height);
@@ -497,7 +505,7 @@ function openFile(){
       canvWidth = base_image.width;
       canvHeight = base_image.height;
       currentNumberScales = CONST_DEF_Sacle;
-
+      drawFillBackground();
       ctx.drawImage(base_image, 0, 0);
     }
   };
@@ -505,23 +513,11 @@ function openFile(){
 }
 
 function saveFile(){
-  // localStorage.clear();
-  // let imgAsDataURL = canv.toDataURL("image/png");
-  // try {
-  //   localStorage.setItem("elephant", imgAsDataURL);
-  //   console.log("Saved file");
-  // }
-  // catch (e) {
-  //     console.log("Storage failed: " + e);
-  // }
-
-  let imgAsDataURL = canv.toDataURL("image/png");
+  let imgAsDataURL = canv.toDataURL("image/png", 1.0);
   var link = document.createElement("a");
-  // document.body.appendChild(link);
   link.setAttribute("href", imgAsDataURL);
   link.setAttribute("download", "111.png");
   link.click();
-  
 }
 
 
