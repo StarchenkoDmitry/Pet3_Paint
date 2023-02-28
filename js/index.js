@@ -12,6 +12,15 @@ const canvBackgroundColor = "rgb(255, 255, 255)";
 let curentColorL = "rgb(0, 0, 255)";
 let curentColorR = "rgb(255, 0, 0)";
 
+
+const Tool_Pencil = Symbol();
+const Tool_Pouring = Symbol();
+// const Tool_Pipetka = Symbol();
+// const Tool_Lastik = Symbol();
+// const Tool_Text = Symbol();
+let currentTool = Tool_Pencil;
+
+
 let currentWidthLine = 1;
 
 setColorMouseL(curentColorL);
@@ -218,11 +227,17 @@ window.onmousemove = (e)=>{
 }
 
 
-const Instrument_Pencil = Symbol();
-const Instrument_Fill = Symbol();
-const Instrument_Pipetka = Symbol();
-const Instrument_Lastik = Symbol();
-const Instrument_Text = Symbol();
+
+function changeTool(str){
+  if(str === "Pencil"){
+    currentTool = Tool_Pencil;
+  }
+  else if(str ==="Pouring"){
+    currentTool = Tool_Pouring;
+  }
+}
+
+
 
 
 for(let p = 0;p <CONST_colorsList.length;p++){
@@ -380,16 +395,18 @@ canv.onmousemove = (e) =>{
   if(!mouseCords.isAltDown && !mouseCords.isShiftDown){
     if(mouseCords.isDown){
 
-      const fx = mouseCords.x_old /currentCanvWidth * canvContext2DWidth;
-      const fy = mouseCords.y_old /currentCanvHeight * canvContext2DHeight;
-      const tx = mouseCords.x /currentCanvWidth * canvContext2DWidth;
-      const ty = mouseCords.y /currentCanvHeight * canvContext2DHeight;
+      const fx = mouseCords.x_old / currentCanvWidth * canvContext2DWidth;
+      const fy = mouseCords.y_old / currentCanvHeight * canvContext2DHeight;
+      const tx = mouseCords.x / currentCanvWidth * canvContext2DWidth;
+      const ty = mouseCords.y / currentCanvHeight * canvContext2DHeight;
 
-      if(mouseCords.whichClick === CONST_whichClick_MouseLeft){
-        drawLine(fx,fy,tx,ty, curentColorL,currentWidthLine);
-      }
-      else if(mouseCords.whichClick === CONST_whichClick_MouseRight){
-        drawLine(fx,fy,tx,ty, curentColorR,currentWidthLine);
+      if(currentTool === Tool_Pencil){
+        if(mouseCords.whichClick === CONST_whichClick_MouseLeft){
+          drawLine(fx,fy,tx,ty, curentColorL,currentWidthLine);
+        }
+        else if(mouseCords.whichClick === CONST_whichClick_MouseRight){
+          drawLine(fx,fy,tx,ty, curentColorR,currentWidthLine);
+        }
       }
     }
   }
@@ -400,16 +417,140 @@ canv.onmousemove = (e) =>{
 }
 
 
+
 canv.onmousedown = function(e) {
   const x = e.offsetX;
   const y = e.offsetY;
+
   mouseCords.isDown = true;
   mouseCords.whichClick = e.which;
   mouseCords.x = x;
   mouseCords.y = y;
   mouseCords.x_old = x;
   mouseCords.y_old = y;
+  
+  if(currentTool === Tool_Pouring){
+
+    const px =  Math.round(x / currentCanvWidth * canvContext2DWidth);
+    const py = Math.round(y / currentCanvHeight * canvContext2DHeight);
+    
+    if((px < 0 || px >= canvContext2DWidth) || (py < 0 && py >= canvContext2DHeight)) return;
+
+    const imgData = ctx.getImageData(0,0,canvas.width,canvas.height);
+    let data = imgData.data;
+
+    const recLen = data.byteLength;
+    let rec = new Array(recLen);
+    for(let p = 0;p < recLen;p++){ rec[p] = 0; }
+
+    const cPixel = getPixel(px,py,data,canvContext2DWidth);
+    const cColor = getRGB(curentColorL);
+
+    setRec(px,py,rec,1,canvContext2DWidth);
+    const listOnCh = [{x:px,y:py}];
+    const nList = 1;
+    let cnList = 0;
+
+
+
+    while(!isDone(rec,recLen,canvContext2DWidth)){
+      const p = getDooRec(rec,recLen,canvContext2DWidth);
+      const pix = getPixel(p.x,p.y,data,canvContext2DWidth);
+      
+      setRec(p.x,p.y,rec,2,canvContext2DWidth);
+      
+      if(prosRazPixel(pix,cPixel) > .88){
+        setPixel(p.x,p.y,data,canvContext2DWidth,cColor);
+      }
+      // console.l  og("1");
+      
+      if(p.x >0){
+        if(getRec(p.x-1,p.y,rec,canvContext2DWidth) === 0){
+          // console.log("2");
+          setRec(p.x-1,p.y,rec,1,canvContext2DWidth)
+        }else{ 
+          // console.log("3");
+        }
+      }
+      if(p.y >0){
+        if(getRec(p.x,p.y-1,rec,canvContext2DWidth) === 0){ setRec(p.x,p.y-1,rec,1,canvContext2DWidth)}
+      }
+      if(p.x < canvContext2DWidth-1){
+        if(getRec(p.x+1,p.y,rec,canvContext2DWidth) === 0){ setRec(p.x+1,p.y,rec,1,canvContext2DWidth)}
+      }
+      if(p.y <canvContext2DHeight - 1){
+        if(getRec(p.x,p.y+1,rec,canvContext2DWidth) === 0){ setRec(p.x,p.y+1,rec,1,canvContext2DWidth)}
+      }
+    }
+    console.log("end");    
+    ctx.putImageData(imgData,0,0);
+  }
 }
+
+
+
+// function getRGB(str){
+//   var match = str.match(/rgba?\((\d{1,3}), ?(\d{1,3}), ?(\d{1,3})\)?(?:, ?(\d(?:\.\d?))\))?/);
+//   return match ? [match[1],match[2],match[3]] : [0,0,0];
+// }
+function getRGB(str){
+  var match = str.match(/rgba?\((\d{1,3}), ?(\d{1,3}), ?(\d{1,3})\)?(?:, ?(\d(?:\.\d?))\))?/);
+  return match ? [Number.parseInt(match[1]),Number.parseInt(match[2]),Number.parseInt(match[3])] : [0,0,0];
+}
+
+function prosRazPixel(pix,pixt){
+  const x1 =  (255 - Math.abs(pix[0]-pixt[0]))/255;
+  const x2 =  (255 - Math.abs(pix[1]-pixt[1]))/255;
+  const x3 =  (255 - Math.abs(pix[2]-pixt[2]))/255;
+  return x1*x2*x3;
+}
+
+function getDooRec(rec,len,w){
+  for(let p =0;p< len;p++){
+    if(rec[p] === 1){
+      // console.log(`${p}, ${len}, ${w} | ${p%w}, ${(p - (p%w))/w}`);
+      return {x: p%w,  y: (p - (p%w))/w }
+    }
+  }
+  throw new Error('Error 56785685466868!'); 
+}
+
+function isDone(rec,len){
+  for(let p =0;p< len;p++){
+    // console.log(rec[p])
+    if(rec[p] === 1)return false;
+  }
+  return true;
+}
+
+function setRec(x,y,rec,r,w){
+  const cord_pixel = x + y*w;
+  rec[cord_pixel] = r;
+}
+function getRec(x,y,rec,w){
+  const cord_pixel = x + y*w;
+  return rec[cord_pixel];
+}
+
+function getPixel(x, y, data,w){
+  const cord_pixel = x*4 + y*w*4;
+  if(cord_pixel <= data.byteLength - 4){
+    return [data[cord_pixel],data[cord_pixel+1],data[cord_pixel+2]];
+  }
+  else{
+    throw new Error('Parameter is bigest than data.byteLength!'); 
+  }
+}
+function setPixel(x, y, data,w, pix){  
+  const cord_pixel = x*4 + y*w*4;
+  data[cord_pixel] = pix[0];
+  data[cord_pixel + 1] = pix[1];
+  data[cord_pixel + 2] = pix[2];
+}
+
+
+
+
 
 canv.onmouseup = function(e) {
   const x = e.offsetX;
@@ -445,6 +586,7 @@ function drawFillBackground(){
 }
 
 function drawLine(bx,by,ex,ey,lineColor,width=10){
+  // console.log(bx,by,ex,ey,lineColor);
   ctx.beginPath();
   ctx.moveTo(bx,by);
   ctx.lineTo(ex, ey);
@@ -541,8 +683,31 @@ function changeLanguage(newLang){
 let hash = window.location.hash;
 if(hash.length>1) {hash = hash.substring(1); }
 else if (hash.length <=1) {hash = listLang[0];}
-console.log(hash);
 if(listLang.includes(hash)){
   changeLanguage(hash);
   selectLang.value = hash;
+}
+
+
+
+
+const www = 200;
+const hhh = 200;
+setCanvSizeStyle(www,hhh);
+setCanvTopLeft(cavnDefX,cavnDefY);
+setCanvSizeContex2D(www,hhh);
+canvWidth = www;
+canvHeight = hhh;
+currentNumberScales = CONST_DEF_Sacle;
+drawFillBackground();
+
+RandDraw();
+
+
+function RandDraw(){
+  for(let p = 0;p < 800;p++){
+    drawLine(Math.round(Math.random()*www)-50,Math.round(Math.random()*hhh)-50,
+    Math.round(Math.random()*www)-50,Math.round(Math.random()*hhh)-50,
+    getRandColor(),Math.round(Math.random()*5)+10);
+  }
 }

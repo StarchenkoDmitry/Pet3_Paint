@@ -310,19 +310,24 @@ option {
 }
 
 
-.instumetn-list{
+.tools-list{
     display: flex;
     flex-wrap: wrap;
 }
-
-.instumetn-item{
+.tools-item{
     margin: .1rem;
-    width: 2.5rem;/*3.5625rem*/
+    width: 2.5rem;
+    height: 2.5rem;
+    
     border: 2px solid #0a4bff;
     background-color: white;
     border-radius: 5px;
+        
+    cursor: pointer;    
 }
-.instumetn-item img{
+.tools-item img{
+    width: 100%;
+    height: 100%;
     display: block;
 }
 
