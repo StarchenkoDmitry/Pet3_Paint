@@ -17,3 +17,29 @@ function saveFile(){
     link.click();
     
   }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  let time = performance.now();
+
+  time = performance.now() - time;
+  console.log('Время выполнения = ', time);
