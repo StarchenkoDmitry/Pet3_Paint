@@ -6,7 +6,7 @@ const langListTrans={
     },
     "widthline":{
         "en": "Width line",
-        "ru": "Толщена лини",
+        "ru": "Толщина лини",
         "ua": "Товщина лінії"
     },
     "language":{
