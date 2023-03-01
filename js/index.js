@@ -21,7 +21,11 @@ const Tool_Pouring = Symbol();
 let currentTool = Tool_Pencil;
 
 
-let currentWidthLine = 1;
+let currentWidthLine = 16;
+const CONST_WidthLine = [4,8,16];
+const CONST_WidthLineForStyleElement = [4,8,16];
+createWidthLineList();
+
 
 setColorMouseL(curentColorL);
 setColorMouseR(curentColorR);
@@ -259,10 +263,6 @@ Array.from(document.getElementsByClassName("palitra-item-color")).forEach(e =>{
 
 
 
-const CONST_WidthLine = [4,8,16];
-const CONST_WidthLineForStyleElement = [4,8,16];
-currentWidthLine = 16;
-createWidthLineList();
 
 function createWidthLineList(){
   doc_block_widthline_list.innerHTML = "";
@@ -430,6 +430,7 @@ canv.onmousedown = function(e) {
   mouseCords.y_old = y;
   
   if(currentTool === Tool_Pouring){
+    let time = performance.now();
 
     const px =  Math.round(x / currentCanvWidth * canvContext2DWidth);
     const py = Math.round(y / currentCanvHeight * canvContext2DHeight);
@@ -448,51 +449,57 @@ canv.onmousedown = function(e) {
 
     setRec(px,py,rec,1,canvContext2DWidth);
     const listOnCh = [{x:px,y:py}];
-    const nList = 1;
     let cnList = 0;
 
 
-
-    while(!isDone(rec,recLen,canvContext2DWidth)){
-      const p = getDooRec(rec,recLen,canvContext2DWidth);
+    while(cnList < listOnCh.length){
+      const p = listOnCh[cnList];
+      if(getRec(p.x,p.y,rec,canvContext2DWidth) != 1) {
+        cnList++;
+        continue;
+      }
+      setRec(p.x,p.y,rec,2,canvContext2DWidth);
       const pix = getPixel(p.x,p.y,data,canvContext2DWidth);
       
-      setRec(p.x,p.y,rec,2,canvContext2DWidth);
-      
-      if(prosRazPixel(pix,cPixel) > .88){
+      if(prosRazPixel(pix,cPixel) > .80){
         setPixel(p.x,p.y,data,canvContext2DWidth,cColor);
+      }else{
+        cnList++;
+        continue;
       }
-      // console.l  og("1");
       
       if(p.x >0){
         if(getRec(p.x-1,p.y,rec,canvContext2DWidth) === 0){
-          // console.log("2");
-          setRec(p.x-1,p.y,rec,1,canvContext2DWidth)
-        }else{ 
-          // console.log("3");
+          setRec(p.x-1,p.y,rec,1,canvContext2DWidth);
+          listOnCh.push({x:p.x-1 ,y:p.y });
         }
       }
       if(p.y >0){
-        if(getRec(p.x,p.y-1,rec,canvContext2DWidth) === 0){ setRec(p.x,p.y-1,rec,1,canvContext2DWidth)}
+        if(getRec(p.x,p.y-1,rec,canvContext2DWidth) === 0){
+          setRec(p.x,p.y-1,rec,1,canvContext2DWidth);
+          listOnCh.push({x:p.x ,y:p.y-1 });
+        }
       }
       if(p.x < canvContext2DWidth-1){
-        if(getRec(p.x+1,p.y,rec,canvContext2DWidth) === 0){ setRec(p.x+1,p.y,rec,1,canvContext2DWidth)}
+        if(getRec(p.x+1,p.y,rec,canvContext2DWidth) === 0){ 
+          setRec(p.x+1,p.y,rec,1,canvContext2DWidth);
+          listOnCh.push({x:p.x +1 ,y:p.y });
+        }
       }
       if(p.y <canvContext2DHeight - 1){
-        if(getRec(p.x,p.y+1,rec,canvContext2DWidth) === 0){ setRec(p.x,p.y+1,rec,1,canvContext2DWidth)}
+        if(getRec(p.x,p.y+1,rec,canvContext2DWidth) === 0){ 
+          setRec(p.x,p.y+1,rec,1,canvContext2DWidth);
+          listOnCh.push({x:p.x ,y:p.y+1 });
+        }
       }
-    }
-    console.log("end");    
+      cnList++;
+    }  
+    time = performance.now() - time;
+    console.log('Время выполнения = ', time);
     ctx.putImageData(imgData,0,0);
   }
 }
 
-
-
-// function getRGB(str){
-//   var match = str.match(/rgba?\((\d{1,3}), ?(\d{1,3}), ?(\d{1,3})\)?(?:, ?(\d(?:\.\d?))\))?/);
-//   return match ? [match[1],match[2],match[3]] : [0,0,0];
-// }
 function getRGB(str){
   var match = str.match(/rgba?\((\d{1,3}), ?(\d{1,3}), ?(\d{1,3})\)?(?:, ?(\d(?:\.\d?))\))?/);
   return match ? [Number.parseInt(match[1]),Number.parseInt(match[2]),Number.parseInt(match[3])] : [0,0,0];
@@ -503,24 +510,6 @@ function prosRazPixel(pix,pixt){
   const x2 =  (255 - Math.abs(pix[1]-pixt[1]))/255;
   const x3 =  (255 - Math.abs(pix[2]-pixt[2]))/255;
   return x1*x2*x3;
-}
-
-function getDooRec(rec,len,w){
-  for(let p =0;p< len;p++){
-    if(rec[p] === 1){
-      // console.log(`${p}, ${len}, ${w} | ${p%w}, ${(p - (p%w))/w}`);
-      return {x: p%w,  y: (p - (p%w))/w }
-    }
-  }
-  throw new Error('Error 56785685466868!'); 
-}
-
-function isDone(rec,len){
-  for(let p =0;p< len;p++){
-    // console.log(rec[p])
-    if(rec[p] === 1)return false;
-  }
-  return true;
 }
 
 function setRec(x,y,rec,r,w){
@@ -586,7 +575,6 @@ function drawFillBackground(){
 }
 
 function drawLine(bx,by,ex,ey,lineColor,width=10){
-  // console.log(bx,by,ex,ey,lineColor);
   ctx.beginPath();
   ctx.moveTo(bx,by);
   ctx.lineTo(ex, ey);
@@ -607,8 +595,8 @@ function drawLine(bx,by,ex,ey,lineColor,width=10){
 
 
 function changeSize(){
-  const nwidth = document.getElementById("block-options-size-width").value;
-  const nheight = document.getElementById("block-options-size-height").value;
+  const nwidth = parseInt(document.getElementById("block-options-size-width").value);
+  const nheight = parseInt(document.getElementById("block-options-size-height").value);
 
   setCanvSizeContex2D(nwidth,nheight);
   setCanvSizeStyle(nwidth,nheight);
@@ -691,23 +679,21 @@ if(listLang.includes(hash)){
 
 
 
-const www = 200;
-const hhh = 200;
-setCanvSizeStyle(www,hhh);
-setCanvTopLeft(cavnDefX,cavnDefY);
-setCanvSizeContex2D(www,hhh);
-canvWidth = www;
-canvHeight = hhh;
-currentNumberScales = CONST_DEF_Sacle;
-drawFillBackground();
-
-RandDraw();
-
+// const www = 800;
+// const hhh = 800;
+// setCanvSizeStyle(www,hhh);
+// setCanvTopLeft(cavnDefX,cavnDefY);
+// setCanvSizeContex2D(www,hhh);
+// canvWidth = www;
+// canvHeight = hhh;
+// currentNumberScales = CONST_DEF_Sacle;
+// drawFillBackground();
+// RandDraw();
 
 function RandDraw(){
   for(let p = 0;p < 800;p++){
-    drawLine(Math.round(Math.random()*www)-50,Math.round(Math.random()*hhh)-50,
-    Math.round(Math.random()*www)-50,Math.round(Math.random()*hhh)-50,
+    drawLine(Math.round(Math.random()*www)-500,Math.round(Math.random()*hhh)-500,
+    Math.round(Math.random()*www)-500,Math.round(Math.random()*hhh)-500,
     getRandColor(),Math.round(Math.random()*5)+10);
   }
 }
