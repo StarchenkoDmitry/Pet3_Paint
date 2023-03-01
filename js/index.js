@@ -430,8 +430,6 @@ canv.onmousedown = function(e) {
   mouseCords.y_old = y;
   
   if(currentTool === Tool_Pouring){
-    let time = performance.now();
-
     const px =  Math.round(x / currentCanvWidth * canvContext2DWidth);
     const py = Math.round(y / currentCanvHeight * canvContext2DHeight);
     
@@ -493,9 +491,7 @@ canv.onmousedown = function(e) {
         }
       }
       cnList++;
-    }  
-    time = performance.now() - time;
-    console.log('Время выполнения = ', time);
+    }
     ctx.putImageData(imgData,0,0);
   }
 }
