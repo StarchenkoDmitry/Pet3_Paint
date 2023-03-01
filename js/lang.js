@@ -78,11 +78,5 @@ const langListTrans={
         "en": "Alt + Scroll = scaling",
         "ru": "Alt + Scroll = масштабирование",
         "ua": "Alt + Scroll = масштабування"
-    }   
-    
-    // "":{
-    //     "en": "",
-    //     "ru": "",
-    //     "ua": ""
-    //}
+    }
 }
